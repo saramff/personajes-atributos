@@ -9,7 +9,6 @@ const WOMEN_FACE_URL = `${IMG_URL}/caras-antiguas-mujeres`;
 export const menDataArray = [
   {
     bodyImg: `${MEN_BODY_URL}/man-01.jpg`,
-    faceImg: `${MEN_FACE_URL}/man-01.jpg`,
     name: "",
     trueSentence: "frase 1",
     falseSentence: "",

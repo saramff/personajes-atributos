@@ -80,12 +80,63 @@ peopleDataArray.forEach(
 // suffle people array randomly
 shuffle(peopleDataArray);
 
-console.log(peopleDataArray);
+/**************************************************************************************/
+
+const FACES_URL =
+  "https://raw.githubusercontent.com/saramff/people-attributes-images/refs/heads/master";
+const IMAGES_PER_GENDER = 4;
+
+// Create pictures arrays for men and women faces
+const menFaces = Array.from(
+  { length: IMAGES_PER_GENDER },
+  (_, i) => `${FACES_URL}/caras-antiguas-hombres/man-${i + 1}.jpg`
+);
+const womenFaces = Array.from(
+  { length: IMAGES_PER_GENDER },
+  (_, i) => `${FACES_URL}/caras-antiguas-mujeres/woman-${i + 1}.jpg`
+);
+
+// Create new array concatenating men & women faces images
+const facesImages = [...menFaces, ...womenFaces];
+
+// Create object array for men and women faces {img, correct_response}
+const facesObj = facesImages.map((img) => {
+  return {
+    img: img,
+    correct_response: correctKey,
+  };
+});
+
+// Create pictures arrays for new faces
+const newMenFaces = Array.from(
+  { length: IMAGES_PER_GENDER },
+  (_, i) => `${FACES_URL}/caras-nuevas-hombres/image-${i + 1}.jpg`
+);
+const newWomenFaces = Array.from(
+  { length: IMAGES_PER_GENDER },
+  (_, i) => `${FACES_URL}/caras-nuevas-mujeres/image-${i + 1}.jpg`
+);
+
+// Create new array concatenating men & women new faces images
+const newFacesImages = [...newMenFaces, ...newWomenFaces];
+
+// Create object array for men and women faces {img, correct_response}
+const newFacesObj = newFacesImages.map((img) => {
+  return {
+    img: img,
+    correct_response: incorrectKey,
+  };
+});
+
+// create new array with all faces and shuffle it
+const allFacesObj = [...facesObj, ...newFacesObj];
+shuffle(allFacesObj);
+
+/**************************************************************************************/
 
 // Get images to preload them
 const bodyImgs = peopleDataArray.map((person) => person.bodyImg);
-const faceImgs = peopleDataArray.map((person) => person.faceImg);
-const allImgs = [...bodyImgs, ...faceImgs];
+const allImgs = [...bodyImgs, ...facesImages, ...newFacesImages];
 
 /**************************************************************************************/
 
@@ -392,10 +443,6 @@ timeline.push(test_objects_procedure);
 
 /**************************************************************************************/
 
-/**************************************************************************************/
-
-/**************************************************************************************/
-
 /* Instructions for Tetris */
 let instructionstetris = {
   type: jsPsychHtmlKeyboardResponse,
@@ -422,7 +469,70 @@ timeline.push(tetris);
 
 /**************************************************************************************/
 
-// /**************************************************************************************/
+/* Instructions for recognition phase */
+let instructionsFaces = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: `
+    <p>Ahora verá una serie de rostros junto con un objeto y una frase asociada.</p>
+    <p>Presione '${incorrectKey.toUpperCase()}', si la frase es falsa, y '${correctKey.toUpperCase()}', si la frase es verdadera.</p>
+    </p></p>
+    <p>Como en este ejemplo: si en la pantalla aparecen la cara de Ana y un oso de peluche, y la frase dice 'Ana tiene un bolígrafo', presione '${incorrectKey.toUpperCase()}' (NO).</p>
+    <br />
+    <div>
+      <img src='https://raw.githubusercontent.com/saramff/face-recognition-images/refs/heads/master/Example/Ana.jpg'  class="img-instructions" />
+      <img src='https://raw.githubusercontent.com/saramff/face-recognition-images/refs/heads/master/Example/Teddy.jpg' class="img-instructions" />
+    </div>
+    <br />
+    <p>Le recomendamos colocar los dedos sobre las teclas ${correctKey.toUpperCase()} y ${incorrectKey.toUpperCase()} durante la tarea para no olvidarlas.</p>
+    <p>Cuando esté preparado, pulse la barra espaciadora para empezar.</p>
+   `,
+  choices: [" "],
+  post_trial_gap: 500,
+};
+timeline.push(instructionsFaces);
+
+/* Create stimuli array for object presentation */
+let testFacesStimuli = allFacesObj.map((face) => {
+  return {
+    stimulus: `
+      <img class="person-img" src="${face.img}">
+      <div class="keys">
+        <p class="${correctKey === "a" ? "left" : "right"}">SÍ</p>
+        <p class="${correctKey === "a" ? "right" : "left"}">NO</p>
+      </div>
+  `,
+    correct_response: face.correct_response,
+  };
+});
+
+/* Faces presentation trial */
+let testFaces = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: jsPsych.timelineVariable("stimulus"),
+  choices: ["a", "l"],
+  data: {
+    task: "response faces presentation",
+    correct_response: jsPsych.timelineVariable("correct_response"),
+  },
+  on_finish: function (data) {
+    data.correct = jsPsych.pluginAPI.compareKeys(
+      data.response,
+      data.correct_response
+    );
+    data.correct_response_meaning =
+      correctKey === data.correct_response ? "YES" : "NO";
+  },
+};
+
+/* Test procedure: fixation + object presentation */
+let testFacesProcedure = {
+  timeline: [fixation, testFaces],
+  timeline_variables: testFacesStimuli,
+  randomize_order: true, // Randomize object order
+};
+timeline.push(testFacesProcedure);
+
+/**************************************************************************************/
 
 // const supabase = createClient(
 //   import.meta.env.VITE_SUPABASE_URL,
