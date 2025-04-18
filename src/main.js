@@ -25,10 +25,6 @@ if (randomNumber < 0.5) {
 
 /**************************************************************************************/
 
-
-
-
-
 // Create suffle function - suffles array index randomly
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -51,6 +47,9 @@ womenDataArray.forEach((woman, index) => woman.name = womenNames[index]);
 // Create new array concatenating men & women
 const peopleDataArray = [...menDataArray, ...womenDataArray];
 
+// add correct_response to objects array
+peopleDataArray.forEach((person) => person.correct_response = correctKey);
+
 // suffle people array randomly
 shuffle(peopleDataArray);
 
@@ -58,18 +57,6 @@ shuffle(peopleDataArray);
 const bodyImgs = peopleDataArray.map((person) => person.bodyImg);
 const faceImgs = peopleDataArray.map((person) => person.faceImg);
 const allImgs = [...bodyImgs, ...faceImgs];
-
-
-/**************************************************************************************/
-
-
-
-/**************************************************************************************/
-
-
-
-/**************************************************************************************/
-
 
 
 /**************************************************************************************/
@@ -241,7 +228,120 @@ timeline.push(welcome);
 
 /**************************************************************************************/
 
+/* Instructions trial */
+let instructions = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: `
+    <p>En este experimento se mostrarán automáticamente diferentes rostros uno tras otro.</p>  
+    <p>Por favor, preste mucha atención a cada rostro y al nombre que lo acompaña.</p>
+    <p>Los rostros aparecerán automáticamente y no necesita hacer nada más que estar atento.</p>
+    <p>Cuando esté preparado, pulse la barra espaciadora para empezar.</p>
+  `,
+  choices: [' '],
+  post_trial_gap: 500,
+};
+timeline.push(instructions);
 
+/* Create stimuli array for image presentation */
+let bodyNameStimuli = peopleDataArray.map((person) => {
+  return {
+    stimulus: `
+      <img class="person-img" src="${person.bodyImg}">
+      <p class="person-name">${person.name}</p>
+    `,
+  };
+});
+
+/* Image presentation trial */
+let test = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: jsPsych.timelineVariable("stimulus"),
+  choices: "NO_KEYS", // Prevent key press
+  trial_duration: 1000, // Display each image for 1 second
+  post_trial_gap: 500
+};
+
+/* Test procedure: fixation + image presentation */
+let test_procedure = {
+  timeline: [fixation, test],
+  timeline_variables: bodyNameStimuli,
+  randomize_order: true, // Randomize image order
+};
+timeline.push(test_procedure);
+
+
+/**************************************************************************************/
+
+/* Instructions for recognition phase */
+let instructionsrecognition = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: `
+    <p>Ahora verá una serie de rostros junto con un objeto y una frase asociada.</p>
+    <p>Presione '${incorrectKey.toUpperCase()}', si la frase es falsa, y '${correctKey.toUpperCase()}', si la frase es verdadera.</p>
+    </p></p>
+    <p>Como en este ejemplo: si en la pantalla aparecen la cara de Ana y un oso de peluche, y la frase dice 'Ana tiene un bolígrafo', presione '${incorrectKey.toUpperCase()}' (NO).</p>
+    <br />
+    <div>
+      <img src='https://raw.githubusercontent.com/saramff/face-recognition-images/refs/heads/master/Example/Ana.jpg'  class="img-instructions" />
+      <img src='https://raw.githubusercontent.com/saramff/face-recognition-images/refs/heads/master/Example/Teddy.jpg' class="img-instructions" />
+    </div>
+    <br />
+    <p>Le recomendamos colocar los dedos sobre las teclas ${correctKey.toUpperCase()} y ${incorrectKey.toUpperCase()} durante la tarea para no olvidarlas.</p>
+    <p>Cuando esté preparado, pulse la barra espaciadora para empezar.</p>
+   `,
+  choices: [' '],
+  post_trial_gap: 500,
+};
+timeline.push(instructionsrecognition);
+
+/* Create stimuli array for object presentation */
+let testPeopleStimuli = peopleDataArray.map((person) => {
+  return {
+    stimulus: `
+      <img class="person-img" src="${person.bodyImg}">
+      <p class="person-name">${person.name}</p>
+      <p class="person-name">${person.trueSentence}</p>      
+    <div class="keys">
+      <p class="${correctKey === 'a' ? 'left' : 'right'}">SÍ</p>
+      <p class="${correctKey === 'a' ? 'right' : 'left'}">NO</p>
+    </div>
+  `,
+    correct_response: person.correct_response
+  };
+});
+
+
+/* People presentation trial */
+let testPeople = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: jsPsych.timelineVariable("stimulus"),
+  choices: ['a', 'l'],
+  data: {
+    task: "response people presentation",
+    correct_response: jsPsych.timelineVariable("correct_response"),
+  },
+  on_finish: function (data) {
+    data.correct = jsPsych.pluginAPI.compareKeys(
+      data.response,
+      data.correct_response
+    );
+    data.correct_response_meaning = correctKey === data.correct_response ? "YES" : "NO";
+  },
+};
+
+/* Test procedure: fixation + object presentation */
+let test_objects_procedure = {
+  timeline: [fixation, testPeople],
+  timeline_variables: testPeopleStimuli,
+  randomize_order: true, // Randomize object order
+};
+timeline.push(test_objects_procedure);
+
+
+/**************************************************************************************/
+
+
+/**************************************************************************************/
 
 
 /**************************************************************************************/
