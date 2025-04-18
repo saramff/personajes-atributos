@@ -3,7 +3,7 @@
 //                                                                    //  
 ////////////////////////////////////////////////////////////////////////
 
-import { menDataArray, womenDataArray, menNames, womenNames } from "./objects.js";
+import { menDataArray, womenDataArray, menNames, womenNames, falseSentences } from "./objects.js";
 
 // import { createClient } from "@supabase/supabase-js";
 
@@ -33,11 +33,31 @@ function shuffle(array) {
   }
 }
 
-// Suffle all arrays (images and names)
+// Suffle men & women data arrays
+shuffle(menDataArray);
+shuffle(womenDataArray);
+
+// set correct_response to correctKey to all men and women
+menDataArray.forEach((man) => man.correct_response = correctKey);
+womenDataArray.forEach((woman) => woman.correct_response = correctKey);
+
+// set correct_response to incorrectKey and showFalseSentence to true to half of them
+for(let i = 0; i < menDataArray.length / 2; i++) {
+  menDataArray[i].correct_response = incorrectKey;
+  menDataArray[i].showFalseSentence = true;
+}
+
+for(let i = 0; i < womenDataArray.length / 2; i++) {
+  womenDataArray[i].correct_response = incorrectKey;
+  womenDataArray[i].showFalseSentence = true;
+}
+
+// Suffle all arrays (data, names & sentences)
 shuffle(menDataArray);
 shuffle(womenDataArray);
 shuffle(menNames);
 shuffle(womenNames);
+shuffle(falseSentences);
 
 // Add names to men and women 
 
@@ -47,11 +67,14 @@ womenDataArray.forEach((woman, index) => woman.name = womenNames[index]);
 // Create new array concatenating men & women
 const peopleDataArray = [...menDataArray, ...womenDataArray];
 
-// add correct_response to objects array
-peopleDataArray.forEach((person) => person.correct_response = correctKey);
+// add falseSentence to people array
+peopleDataArray.forEach((person, index) => person.falseSentence = falseSentences[index]);
 
 // suffle people array randomly
 shuffle(peopleDataArray);
+
+console.log(peopleDataArray);
+
 
 // Get images to preload them
 const bodyImgs = peopleDataArray.map((person) => person.bodyImg);
@@ -300,7 +323,7 @@ let testPeopleStimuli = peopleDataArray.map((person) => {
     stimulus: `
       <img class="person-img" src="${person.bodyImg}">
       <p class="person-name">${person.name}</p>
-      <p class="person-name">${person.trueSentence}</p>      
+      <p class="person-name">${person.showFalseSentence ? person.falseSentence : person.trueSentence}</p>
     <div class="keys">
       <p class="${correctKey === 'a' ? 'left' : 'right'}">SÍ</p>
       <p class="${correctKey === 'a' ? 'right' : 'left'}">NO</p>

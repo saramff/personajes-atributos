@@ -13,6 +13,7 @@ export const menDataArray = [
     name: "",
     trueSentence: "frase 1",
     falseSentence: "",
+    showFalseSentence: false,
     correct_response: "",
   },
   {
@@ -21,6 +22,7 @@ export const menDataArray = [
     name: "",
     trueSentence: "frase 2",
     falseSentence: "",
+    showFalseSentence: false,
     correct_response: "",
   },
   {
@@ -29,6 +31,7 @@ export const menDataArray = [
     name: "",
     trueSentence: "frase 3",
     falseSentence: "",
+    showFalseSentence: false,
     correct_response: "",
   },
   {
@@ -37,14 +40,7 @@ export const menDataArray = [
     name: "",
     trueSentence: "frase 4",
     falseSentence: "",
-    correct_response: "",
-  },
-  {
-    bodyImg: `${MEN_BODY_URL}/man-05.jpg`,
-    faceImg: `${MEN_FACE_URL}/man-05.jpg`,
-    name: "",
-    trueSentence: "frase 5",
-    falseSentence: "",
+    showFalseSentence: false,
     correct_response: "",
   },
 ];
@@ -56,6 +52,7 @@ export const womenDataArray = [
     name: "",
     trueSentence: "frase 01",
     falseSentence: "",
+    showFalseSentence: false,
     correct_response: "",
   },
   {
@@ -64,6 +61,7 @@ export const womenDataArray = [
     name: "",
     trueSentence: "frase 02",
     falseSentence: "",
+    showFalseSentence: false,
     correct_response: "",
   },
   {
@@ -72,6 +70,7 @@ export const womenDataArray = [
     name: "",
     trueSentence: "frase 03",
     falseSentence: "",
+    showFalseSentence: false,
     correct_response: "",
   },
   {
@@ -80,14 +79,7 @@ export const womenDataArray = [
     name: "",
     trueSentence: "frase 04",
     falseSentence: "",
-    correct_response: "",
-  },
-  {
-    bodyImg: `${WOMEN_BODY_URL}/woman-05.jpg`,
-    faceImg: `${WOMEN_FACE_URL}/woman-05.jpg`,
-    name: "",
-    trueSentence: "frase 05",
-    falseSentence: "",
+    showFalseSentence: false,
     correct_response: "",
   },
 ];
@@ -146,3 +138,14 @@ export const womenNames = [
   "Cristina",
   "Julia",
 ];
+
+export const falseSentences = [
+  "fs 1",
+  "fs 2",
+  "fs 3",
+  "fs 4",
+  "fs 5",
+  "fs 6",
+  "fs 7",
+  "fs 8",
+]
