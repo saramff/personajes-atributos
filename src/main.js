@@ -80,11 +80,13 @@ peopleDataArray.forEach(
 // suffle people array randomly
 shuffle(peopleDataArray);
 
+console.log(peopleDataArray);
+
 /**************************************************************************************/
 
 const FACES_URL =
   "https://raw.githubusercontent.com/saramff/people-attributes-images/refs/heads/master";
-const IMAGES_PER_GENDER = 4;
+const IMAGES_PER_GENDER = 24;
 
 // Create pictures arrays for men and women faces
 const menFaces = Array.from(
@@ -335,9 +337,10 @@ timeline.push(welcome);
 let instructions = {
   type: jsPsychHtmlKeyboardResponse,
   stimulus: `
-    <p>En este experimento se mostrarán automáticamente diferentes rostros uno tras otro.</p>  
-    <p>Por favor, preste mucha atención a cada rostro y al nombre que lo acompaña.</p>
-    <p>Los rostros aparecerán automáticamente y no necesita hacer nada más que estar atento.</p>
+    <p>En este experimento se mostrarán automáticamente diferentes personajes uno tras otro.</p>  
+    <p>Por favor, preste mucha atención a la apariencia de cada personaje y al nombre que lo acompaña.</p>
+    <p>Fíjate en todos los detalles.</p>
+    <p>Los personajes aparecerán automáticamente y no necesita hacer nada más que estar atento.</p>
     <p>Cuando esté preparado, pulse la barra espaciadora para empezar.</p>
   `,
   choices: [" "],
@@ -378,14 +381,13 @@ timeline.push(test_procedure);
 let instructionsrecognition = {
   type: jsPsychHtmlKeyboardResponse,
   stimulus: `
-    <p>Ahora verá una serie de rostros junto con un objeto y una frase asociada.</p>
+    <p>Ahora verá los personajes junto con una frase asociada.</p>
     <p>Presione '${incorrectKey.toUpperCase()}', si la frase es falsa, y '${correctKey.toUpperCase()}', si la frase es verdadera.</p>
     </p></p>
-    <p>Como en este ejemplo: si en la pantalla aparecen la cara de Ana y un oso de peluche, y la frase dice 'Ana tiene un bolígrafo', presione '${incorrectKey.toUpperCase()}' (NO).</p>
+    <p>Como en este ejemplo: si en la pantalla aparece este personaje y la frase dice 'Ana tiene un bolígrafo', presione '${incorrectKey.toUpperCase()}' (NO).</p>
     <br />
     <div>
-      <img src='https://raw.githubusercontent.com/saramff/face-recognition-images/refs/heads/master/Example/Ana.jpg'  class="img-instructions" />
-      <img src='https://raw.githubusercontent.com/saramff/face-recognition-images/refs/heads/master/Example/Teddy.jpg' class="img-instructions" />
+      <img src='https://raw.githubusercontent.com/saramff/people-attributes-images/refs/heads/master/Ejemplo-Ana.png'  class="img-instructions" />
     </div>
     <br />
     <p>Le recomendamos colocar los dedos sobre las teclas ${correctKey.toUpperCase()} y ${incorrectKey.toUpperCase()} durante la tarea para no olvidarlas.</p>
@@ -401,14 +403,13 @@ let testPeopleStimuli = peopleDataArray.map((person) => {
   return {
     stimulus: `
       <img class="person-img" src="${person.bodyImg}">
-      <p class="person-name">${person.name}</p>
-      <p class="person-name">${
+      <p class="person-name">${person.name} ${
         person.showFalseSentence ? person.falseSentence : person.trueSentence
       }</p>
-    <div class="keys">
-      <p class="${correctKey === "a" ? "left" : "right"}">SÍ</p>
-      <p class="${correctKey === "a" ? "right" : "left"}">NO</p>
-    </div>
+      <div class="keys">
+        <p class="${correctKey === "a" ? "left" : "right"}">SÍ</p>
+        <p class="${correctKey === "a" ? "right" : "left"}">NO</p>
+      </div>
   `,
     correct_response: person.correct_response,
   };
@@ -473,18 +474,11 @@ timeline.push(tetris);
 let instructionsFaces = {
   type: jsPsychHtmlKeyboardResponse,
   stimulus: `
-    <p>Ahora verá una serie de rostros junto con un objeto y una frase asociada.</p>
-    <p>Presione '${incorrectKey.toUpperCase()}', si la frase es falsa, y '${correctKey.toUpperCase()}', si la frase es verdadera.</p>
-    </p></p>
-    <p>Como en este ejemplo: si en la pantalla aparecen la cara de Ana y un oso de peluche, y la frase dice 'Ana tiene un bolígrafo', presione '${incorrectKey.toUpperCase()}' (NO).</p>
-    <br />
-    <div>
-      <img src='https://raw.githubusercontent.com/saramff/face-recognition-images/refs/heads/master/Example/Ana.jpg'  class="img-instructions" />
-      <img src='https://raw.githubusercontent.com/saramff/face-recognition-images/refs/heads/master/Example/Teddy.jpg' class="img-instructions" />
-    </div>
-    <br />
-    <p>Le recomendamos colocar los dedos sobre las teclas ${correctKey.toUpperCase()} y ${incorrectKey.toUpperCase()} durante la tarea para no olvidarlas.</p>
-    <p>Cuando esté preparado, pulse la barra espaciadora para empezar.</p>
+    <p>Ahora realizará la siguiente tarea:</p>
+    <p>Si ha visto antes la cara del personaje, pulse la tecla '${correctKey.toUpperCase()}' (presente).</p>
+    <p>Si no ha visto antes la cara del personaje, pulse la tecla '${incorrectKey.toUpperCase()}' (no presente).</p>
+    <p>De nuevo, le recomendamos colocar los dedos sobre las teclas ${correctKey.toUpperCase()} y ${incorrectKey.toUpperCase()} durante la tarea para no olvidarlas.</p>
+    <p>Pulse la barra espaciadora para comenzar.</p>
    `,
   choices: [" "],
   post_trial_gap: 500,
@@ -495,7 +489,7 @@ timeline.push(instructionsFaces);
 let testFacesStimuli = allFacesObj.map((face) => {
   return {
     stimulus: `
-      <img class="person-img" src="${face.img}">
+      <img class="face-img" src="${face.img}">
       <div class="keys">
         <p class="${correctKey === "a" ? "left" : "right"}">SÍ</p>
         <p class="${correctKey === "a" ? "right" : "left"}">NO</p>
