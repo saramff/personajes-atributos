@@ -489,8 +489,8 @@ let testFacesStimuli = allFacesObj.map((face) => {
     stimulus: `
       <img class="face-img" src="${face.img}">
       <div class="keys">
-        <p class="${correctKey === "a" ? "left" : "right"}">SÍ</p>
-        <p class="${correctKey === "a" ? "right" : "left"}">NO</p>
+        <p class="${correctKey === "a" ? "left" : "right"}">PRESENTE</p>
+        <p class="${correctKey === "a" ? "right" : "left"}">NO PRESENTE</p>
       </div>
   `,
     correct_response: face.correct_response,
